@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm config *)",
+      "Bash(npm create *)",
+      "Bash(npm install *)",
+      "Bash(npx concurrently *)",
+      "Bash(curl -s http://localhost:5173/1)",
+      "Bash(curl -s http://localhost:5173/admin/login)",
+      "Bash(curl -s http://localhost:5173/api/artists/1)",
+      "Bash(kill %1)",
+      "Bash(taskkill //f //im node.exe)"
+    ]
+  }
+}

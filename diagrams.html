@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>画师之家 - 需求分析与设计图</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f5f5; color: #333; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+    h1 { text-align: center; font-size: 24px; margin-bottom: 40px; color: #1a1a2e; }
+    .section {
+      background: #fff; border-radius: 12px; padding: 30px;
+      margin-bottom: 30px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .section h2 {
+      font-size: 18px; margin-bottom: 8px; color: #4f46e5;
+      padding-bottom: 8px; border-bottom: 2px solid #eef2ff;
+    }
+    .section .desc { font-size: 13px; color: #888; margin-bottom: 20px; }
+    .mermaid { display: flex; justify-content: center; }
+    .page-break { page-break-before: always; }
+    @media print {
+      body { background: #fff; }
+      .section { box-shadow: none; border: 1px solid #e5e7eb; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+<h1>画师之家 — 需求分析 & 系统设计图集</h1>
+
+<!-- ==================== 一、用例图 ==================== -->
+<div class="section">
+  <h2>图1：系统用例图（Use Case Diagram）</h2>
+  <p class="desc">展示系统两大角色（约稿客户、画师管理员）与系统功能之间的用例关系。</p>
+  <div class="mermaid">
+graph TB
+    subgraph 画师之家约稿平台
+        UC1[浏览画师主页]
+        UC2[浏览作品橱窗]
+        UC3[查看大图]
+        UC4[查看价目表]
+        UC5[提交约稿]
+        UC6[登录系统]
+        UC7[管理个人资料]
+        UC8[管理价目]
+        UC9[管理作品]
+        UC10[订单看板流转]
+        UC11[删除订单]
+    end
+
+    Client[👤 约稿客户]
+    Artist[👤 画师管理员]
+
+    Client --> UC1
+    Client --> UC2
+    Client --> UC3
+    Client --> UC4
+    Client --> UC5
+
+    Artist --> UC6
+    Artist --> UC7
+    Artist --> UC8
+    Artist --> UC9
+    Artist --> UC10
+    Artist --> UC11
+
+    UC3 -.->|extend| UC2
+    UC5 -.->|include| UC1
+    UC5 -.->|include| UC4
+    UC10 -.->|include| UC6
+    UC7 -.->|include| UC6
+    UC8 -.->|include| UC6
+    UC9 -.->|include| UC6
+
+    style Client fill:#dbeafe,stroke:#3b82f6
+    style Artist fill:#fef3c7,stroke:#f59e0b
+  </div>
+</div>
+
+<!-- ==================== 二、功能结构图 ==================== -->
+<div class="section">
+  <h2>图2：系统功能结构图</h2>
+  <p class="desc">展示系统整体功能模块的层次划分。</p>
+  <div class="mermaid">
+graph TD
+    Root[🏠 画师之家]
+
+    Root --> M1[📱 客户端]
+    Root --> M2[🖥️ 管理端]
+
+    M1 --> M11[画师主页]
+    M1 --> M12[作品橱窗]
+    M1 --> M13[价目表]
+    M1 --> M14[在线约稿]
+
+    M11 --> M11a[查看画师头像/昵称/简介]
+    M11 --> M11b[查看社交链接]
+    M11 --> M11c[查看统计数据]
+    M11 --> M11d[一键跳转约稿]
+
+    M12 --> M12a[瀑布流作品展示]
+    M12 --> M12b[点击查看大图]
+
+    M13 --> M13a[查看约稿类型与价格]
+    M13 --> M13b[查看服务内容与交付周期]
+
+    M14 --> M14a[步骤1: 选择类型 + 需求描述]
+    M14 --> M14b[步骤2: 填写姓名 + 联系方式]
+    M14 --> M14c[步骤3: 确认信息并提交]
+
+    M2 --> M21[登录认证]
+    M2 --> M22[订单看板]
+    M2 --> M23[基础设置]
+
+    M22 --> M22a[四列看板: 待审核/草稿/上色/完成]
+    M22 --> M22b[拖拽流转订单]
+    M22 --> M22c[刷新与删除订单]
+
+    M23 --> M23a[个人资料编辑]
+    M23 --> M23b[价目管理]
+    M23 --> M23c[作品管理]
+
+    style Root fill:#4f46e5,color:#fff
+    style M1 fill:#dbeafe,stroke:#3b82f6
+    style M2 fill:#fef3c7,stroke:#f59e0b
+  </div>
+</div>
+
+<!-- ==================== 三、系统架构图 ==================== -->
+<div class="section">
+  <h2>图3：系统三层架构图</h2>
+  <p class="desc">展示系统"展示层—业务逻辑层—数据访问层—数据层"的四层划分及模块交互关系。</p>
+  <div class="mermaid">
+graph TB
+    subgraph P[展示层 Presentation]
+        direction LR
+        CL[ClientLayout<br/>客户端外壳]
+        AL[AdminLayout<br/>后台外壳]
+        P1[Profile<br/>画师主页]
+        P2[Gallery<br/>作品橱窗]
+        P3[Pricing<br/>价目表]
+        P4[OrderForm<br/>提交约稿]
+        P5[Login<br/>管理员登录]
+        P6[Dashboard<br/>订单看板]
+        P7[Settings<br/>基础设置]
+    end
+
+    subgraph B[业务逻辑层 Business Logic]
+        direction LR
+        S1[artistStore<br/>画师/作品/价目]
+        S2[orderStore<br/>订单/看板]
+        S3[authStore<br/>登录/鉴权]
+        C1[useOrderForm<br/>约稿表单逻辑]
+        C2[useKanbanDrag<br/>拖拽流转逻辑]
+    end
+
+    subgraph D[数据访问层 Data Access]
+        direction LR
+        API[api/index.js<br/>Axios 封装 + 拦截器]
+        A1[artists.js]
+        A2[orders.js]
+        A3[gallery.js]
+        A4[pricing.js]
+    end
+
+    subgraph DB[数据层 Data]
+        JSON[json-server<br/>db.json<br/>5张数据表]
+    end
+
+    CL --> P1
+    CL --> P2
+    CL --> P3
+    CL --> P4
+    AL --> P6
+    AL --> P7
+
+    P1 & P2 & P3 & P7 --> S1
+    P4 --> C1 --> S2
+    P6 --> C2 --> S2
+    P5 --> S3
+
+    S1 --> A1 & A3 & A4
+    S2 --> A2
+    S3 --> API
+
+    A1 & A2 & A3 & A4 --> API
+    API --> JSON
+
+    style P fill:#eff6ff,stroke:#3b82f6
+    style B fill:#fefce8,stroke:#eab308
+    style D fill:#f0fdf4,stroke:#22c55e
+    style DB fill:#fef2f2,stroke:#ef4444
+  </div>
+</div>
+
+<!-- ==================== 四、业务流程图 ==================== -->
+<div class="section">
+  <h2>图4：核心业务流程图</h2>
+  <p class="desc">展示从客户进入主页到画师完成订单的完整业务闭环。</p>
+  <div class="mermaid">
+flowchart TD
+    A([客户进入画师主页]) --> B[浏览画师简介与作品]
+    B --> C[查看价目表]
+    C --> D{画师是否接单中?}
+    D -->|否| E[提示暂停接单]
+    D -->|是| F[点击立即约稿]
+
+    F --> G[步骤1: 选择约稿类型]
+    G --> H[步骤1: 填写需求描述]
+    H --> I{校验通过?}
+    I -->|否| G
+    I -->|是| J[步骤2: 填写姓名]
+    J --> K[步骤2: 填写联系方式]
+    K --> L{校验通过?}
+    L -->|否| J
+    L -->|是| M[步骤3: 确认信息]
+    M --> N[提交订单]
+
+    N --> O[订单状态: pending 待审核]
+    O --> P[画师登录后台]
+    P --> Q[查看订单看板]
+    Q --> R[审核通过 → 拖入 sketch 草稿]
+    R --> S[完成草稿 → 拖入 color 上色]
+    S --> T[完成上色 → 拖入 done 完成]
+
+    style A fill:#dbeafe
+    style O fill:#fef9c3
+    style T fill:#dcfce7
+    style E fill:#fee2e2
+  </div>
+</div>
+
+<!-- ==================== 五、E-R图 ==================== -->
+<div class="section">
+  <h2>图5：数据库 E-R 图（实体关系图）</h2>
+  <p class="desc">展示系统5个核心实体及其关联关系：artists 为关系中心，与 orders、gallery、pricing 为一对多关系。</p>
+  <div class="mermaid">
+erDiagram
+    artists ||--o{ orders : "1对N"
+    artists ||--o{ gallery : "1对N"
+    artists ||--o{ pricing : "1对N"
+
+    artists {
+        int id PK "画师ID"
+        string name "画师名称"
+        string avatar "头像URL"
+        string status "接单状态"
+        string bio "个人简介"
+        json socialLinks "社交链接"
+    }
+
+    orders {
+        int id PK "订单ID"
+        int artistId FK "关联画师"
+        string customerName "客户姓名"
+        string contactInfo "联系方式"
+        string commissionType "约稿类型"
+        string description "需求描述"
+        int budget "报价金额"
+        string status "订单状态"
+        datetime createdAt "创建时间"
+    }
+
+    gallery {
+        int id PK "作品ID"
+        int artistId FK "关联画师"
+        string imageUrl "作品图片URL"
+        string title "作品标题"
+        string category "作品分类"
+    }
+
+    pricing {
+        int id PK "价目ID"
+        int artistId FK "关联画师"
+        string typeName "类型名称"
+        int price "价格"
+        string description "描述"
+        json features "服务内容列表"
+    }
+
+    users {
+        int id PK "用户ID"
+        string username "用户名"
+        string password "密码"
+        string role "角色"
+    }
+  </div>
+</div>
+
+<!-- ==================== 六、数据表设计 ==================== -->
+<div class="section">
+  <h2>图6：核心数据表结构</h2>
+  <p class="desc">基于 E-R 图细化后的5张数据表完整字段定义。</p>
+  <div class="mermaid">
+classDiagram
+    class artists {
+        +INT id PK
+        VARCHAR name
+        VARCHAR avatar
+        VARCHAR status
+        TEXT bio
+        JSON socialLinks
+    }
+
+    class orders {
+        +INT id PK
+        +INT artistId FK
+        VARCHAR customerName
+        VARCHAR contactInfo
+        VARCHAR commissionType
+        TEXT description
+        INT budget
+        VARCHAR status
+        DATETIME createdAt
+    }
+
+    class gallery {
+        +INT id PK
+        +INT artistId FK
+        VARCHAR imageUrl
+        VARCHAR title
+        VARCHAR category
+    }
+
+    class pricing {
+        +INT id PK
+        +INT artistId FK
+        VARCHAR typeName
+        INT price
+        VARCHAR description
+        JSON features
+    }
+
+    class users {
+        +INT id PK
+        VARCHAR username
+        VARCHAR password
+        VARCHAR role
+    }
+
+    artists "1" -- "N" orders
+    artists "1" -- "N" gallery
+    artists "1" -- "N" pricing
+  </div>
+</div>
+
+<!-- ==================== 七、时序图 - 约稿提交 ==================== -->
+<div class="section">
+  <h2>图7：时序图 — 约稿提交流程</h2>
+  <p class="desc">展示客户完成三步约稿向导并提交订单的完整时序交互。</p>
+  <div class="mermaid">
+sequenceDiagram
+    actor Client as 约稿客户
+    participant OrderForm as OrderForm.vue
+    participant Composable as useOrderForm
+    participant Store as orderStore
+    participant API as orders.js
+    participant Server as json-server
+
+    Client->>OrderForm: 步骤1: 选择类型 + 填写描述
+    OrderForm->>Composable: 更新 formData.commissionType
+    OrderForm->>Composable: 更新 formData.description
+    Client->>OrderForm: 点击"下一步"
+    OrderForm->>Composable: validateStep(0)
+    Composable-->>OrderForm: 校验通过
+
+    Client->>OrderForm: 步骤2: 填写姓名 + 联系方式
+    OrderForm->>Composable: 更新 formData.customerName
+    OrderForm->>Composable: 更新 formData.contactInfo
+    Client->>OrderForm: 点击"下一步"
+    OrderForm->>Composable: validateStep(1)
+    Composable-->>OrderForm: 校验通过
+
+    Client->>OrderForm: 步骤3: 确认信息无误
+    Client->>OrderForm: 点击"确认提交"
+    OrderForm->>Composable: submitOrder()
+    Composable->>Store: addOrder(artistId, formData)
+    Store->>API: POST /orders (status: pending)
+    API->>Server: POST /orders
+    Server-->>API: 返回新建订单 JSON
+    API-->>Store: 返回订单数据
+    Store->>Store: orders.push(created)
+    Store->>Store: populateColumns()
+    Store-->>Composable: success = true
+    Composable->>Composable: submitSuccess = true
+    Composable-->>OrderForm: 显示成功
+    OrderForm-->>Client: ✅ 提交成功，返回主页
+  </div>
+</div>
+
+<!-- ==================== 八、时序图 - 登录认证 ==================== -->
+<div class="section">
+  <h2>图8：时序图 — 管理员登录认证流程</h2>
+  <p class="desc">展示画师登录后台时，从输入凭证到路由跳转的完整鉴权流程。</p>
+  <div class="mermaid">
+sequenceDiagram
+    actor Artist as 画师管理员
+    participant Login as Login.vue
+    participant Auth as authStore
+    participant LS as localStorage
+    participant Router as Vue Router
+    participant Guard as 路由守卫
+
+    Artist->>Login: 输入用户名: admin
+    Artist->>Login: 输入密码: admin123
+    Artist->>Login: 点击"登录"
+    Login->>Auth: login('admin', 'admin123')
+
+    Auth->>Auth: 校验用户名和密码
+    alt 校验成功
+        Auth->>Auth: 生成 Token
+        Auth->>LS: setItem('auth_token', token)
+        Auth->>LS: setItem('auth_user', userData)
+        Auth-->>Login: return true
+        Login->>Router: push('/admin/dashboard')
+        Router->>Guard: beforeEach 触发
+        Guard->>Auth: isAuthenticated?
+        Auth-->>Guard: true
+        Guard-->>Router: 放行
+        Router-->>Artist: 显示订单看板页面
+    else 校验失败
+        Auth->>Auth: loginError = '用户名或密码错误'
+        Auth-->>Login: return false
+        Login-->>Artist: 显示错误提示
+    end
+  </div>
+</div>
+
+<!-- ==================== 九、活动图 - 订单看板拖拽 ==================== -->
+<div class="section">
+  <h2>图9：活动图 — 订单看板拖拽流转</h2>
+  <p class="desc">展示画师在后台看板中拖拽订单卡片实现状态流转的执行过程。</p>
+  <div class="mermaid">
+stateDiagram-v2
+    [*] --> 画师登录后台
+    画师登录后台 --> 加载订单看板
+    加载订单看板 --> 四列看板展示
+
+    四列看板展示 --> 选中订单卡片
+    选中订单卡片 --> 拖拽至目标列
+    拖拽至目标列 --> 本地列数据更新
+
+    本地列数据更新 --> 判断重复更新
+    判断重复更新 --> 正在更新中: 该订单正在更新
+    正在更新中 --> 四列看板展示: 忽略本次操作
+
+    判断重复更新 --> 调用API更新: 不在更新中
+    调用API更新 --> 乐观更新订单状态
+    乐观更新订单状态 --> PUT请求发送
+
+    PUT请求发送 --> 更新成功: 服务器返回成功
+    更新成功 --> 四列看板展示: 看板保持当前状态
+
+    PUT请求发送 --> 更新失败: 网络异常
+    更新失败 --> 回滚操作
+    回滚操作 --> 重新拉取订单列表
+    重新拉取订单列表 --> 四列看板展示: 恢复到服务器真实状态
+  </div>
+</div>
+
+<!-- ==================== 十、订单状态流转图 ==================== -->
+<div class="section">
+  <h2>图10：订单状态流转图</h2>
+  <p class="desc">展示订单从创建到完成的四阶段状态机流转。</p>
+  <div class="mermaid">
+stateDiagram-v2
+    direction LR
+
+    [*] --> pending: 客户提交约稿
+    pending --> sketch: 画师审核通过
+    sketch --> color: 草稿完成
+    color --> done: 上色完成
+
+    pending --> [*]: 画师拒单/删除
+    sketch --> pending: 需重新审核
+    color --> sketch: 需修改草稿
+    done --> [*]: 订单完成归档
+
+    note right of pending: 待审核
+    note right of sketch: 草稿阶段
+    note right of color: 上色阶段
+    note right of done: 已完成
+  </div>
+</div>
+
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    securityLevel: 'loose',
+    flowchart: { useMaxWidth: true, htmlLabels: true },
+    sequence: { useMaxWidth: true, showSequenceNumbers: false },
+    er: { useMaxWidth: true },
+  });
+</script>
+</body>
+</html>

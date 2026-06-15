@@ -1,0 +1,155 @@
+{
+  "artists": [
+    {
+      "name": "画师小李清真",
+      "avatar": "https://picsum.photos/seed/artist1/200/200",
+      "status": "accepting",
+      "bio": "从业5年，擅长日系插画与角色设计。曾为多个独立游戏项目提供美术支持。",
+      "id": 1
+    },
+    {
+      "id": 2,
+      "name": "画师小王",
+      "avatar": "https://picsum.photos/seed/artist2/200/200",
+      "status": "resting",
+      "bio": "自由插画师，主攻厚涂风格。",
+      "socialLinks": {
+        "weibo": "https://weibo.com/example2"
+      }
+    }
+  ],
+  "orders": [
+    {
+      "status": "sketch",
+      "id": 1
+    },
+    {
+      "status": "pending",
+      "id": 2
+    },
+    {
+      "status": "sketch",
+      "id": 3
+    },
+    {
+      "status": "rejected",
+      "id": 4
+    },
+    {
+      "status": "pending",
+      "id": 5
+    },
+    {
+      "status": "rejected",
+      "id": 6
+    }
+  ],
+  "gallery": [
+    {
+      "id": 1,
+      "artistId": 1,
+      "imageUrl": "https://picsum.photos/seed/gallery1/600/800",
+      "title": "夏日少女",
+      "category": "头像",
+      "description": "夏日主题的半身头像，以清新色调为主，背景点缀有向日葵和蓝天元素。适合用作社交头像或个人插画收藏。"
+    },
+    {
+      "id": 2,
+      "artistId": 1,
+      "imageUrl": "https://picsum.photos/seed/gallery2/600/900",
+      "title": "古城夜景",
+      "category": "场景",
+      "description": "以中国南方古镇为灵感创作的夜景场景，暖黄的灯笼与冷蓝的夜空形成对比，水面倒影细节丰富。"
+    },
+    {
+      "id": 3,
+      "artistId": 1,
+      "imageUrl": "https://picsum.photos/seed/gallery3/800/600",
+      "title": "机甲战士",
+      "category": "角色设计",
+      "description": "科幻风格的机甲角色设计，融合了日式机甲与中式铠甲元素，配有详细的武器与装甲分解图。"
+    },
+    {
+      "id": 4,
+      "artistId": 1,
+      "imageUrl": "https://picsum.photos/seed/gallery4/600/800",
+      "title": "花与少女",
+      "category": "头像",
+      "description": "柔美风格的少女头像，发间点缀着盛开的樱花，整体色调柔和温暖，突出人物神态与花卉细节。"
+    },
+    {
+      "id": 5,
+      "artistId": 1,
+      "imageUrl": "https://picsum.photos/seed/gallery5/600/600",
+      "title": "星空",
+      "category": "场景",
+      "description": "梦幻星空场景，以深蓝与紫色为主色调，绘制了银河、流星与远山的剪影，营造宁静深邃的氛围。"
+    },
+    {
+      "id": 6,
+      "artistId": 1,
+      "imageUrl": "https://picsum.photos/seed/gallery6/600/800",
+      "title": "精灵女王",
+      "category": "角色设计",
+      "description": "西方奇幻风格的精灵女王全身立绘，华丽的宫廷长袍搭配水晶权杖，背景为精灵森林的神秘光影。"
+    }
+  ],
+  "pricing": [
+    {
+      "id": 1,
+      "artistId": 1,
+      "typeName": "头像",
+      "price": 300,
+      "description": "精致日系头像绘制",
+      "features": [
+        "线稿 + 上色",
+        "简单背景",
+        "可修改2次",
+        "交付周期7天"
+      ]
+    },
+    {
+      "id": 2,
+      "artistId": 1,
+      "typeName": "半身像",
+      "price": 800,
+      "description": "半身角色插画",
+      "features": [
+        "精细线稿 + 上色",
+        "中等复杂度背景",
+        "可修改3次",
+        "交付周期14天"
+      ]
+    },
+    {
+      "id": 3,
+      "artistId": 1,
+      "typeName": "全身像",
+      "price": 1500,
+      "description": "完整全身角色插画",
+      "features": [
+        "精草 + 精细上色",
+        "复杂背景",
+        "可修改5次",
+        "交付周期30天",
+        "含商用授权"
+      ]
+    },
+    {
+      "artistId": 1,
+      "typeName": "a ",
+      "price": 0,
+      "description": "",
+      "features": [],
+      "id": 5
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "admin123",
+      "role": "admin"
+    }
+  ]
+}
