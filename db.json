@@ -20,28 +20,70 @@
   ],
   "orders": [
     {
-      "status": "sketch",
-      "id": 1
-    },
-    {
+      "id": 1,
+      "artistId": 1,
+      "customerName": "张三",
+      "contactInfo": "zhangsan@email.com",
+      "commissionType": "半身像",
+      "description": "想要一张日系风格的半身插画，角色是银发少女，背景为樱花树下的夜景",
+      "budget": 800,
       "status": "pending",
-      "id": 2
+      "createdAt": "2026-06-10T08:30:00.000Z"
     },
     {
-      "status": "sketch",
-      "id": 3
-    },
-    {
-      "status": "rejected",
-      "id": 4
-    },
-    {
+      "id": 2,
+      "artistId": 1,
+      "customerName": "李四",
+      "contactInfo": "lisi@wechat.com",
+      "commissionType": "头像",
+      "description": "Q版猫咪头像，橘猫主题，温暖色调",
+      "budget": 300,
       "status": "pending",
-      "id": 5
+      "createdAt": "2026-06-12T03:33:48.941Z"
     },
     {
+      "id": 3,
+      "artistId": 1,
+      "customerName": "王五",
+      "contactInfo": "wangwu@example.com",
+      "commissionType": "全身像",
+      "description": "奇幻风格的精灵战士全身立绘，需要详细铠甲设计",
+      "budget": 1500,
+      "status": "sketch",
+      "createdAt": "2026-06-08T14:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "artistId": 1,
+      "customerName": "赵六",
+      "contactInfo": "zhaoliu@email.com",
+      "commissionType": "头像",
+      "description": "Q版头像，宠物主题",
+      "budget": 200,
+      "status": "done",
+      "createdAt": "2026-05-01T09:00:00.000Z"
+    },
+    {
+      "id": 5,
+      "artistId": 1,
+      "customerName": "陈七",
+      "contactInfo": "chenqi@phone.com",
+      "commissionType": "半身像",
+      "description": "古风半身像，水墨风格，折扇与梅花元素",
+      "budget": 900,
+      "status": "color",
+      "createdAt": "2026-06-05T11:20:00.000Z"
+    },
+    {
+      "id": 6,
+      "artistId": 1,
+      "customerName": "周八",
+      "contactInfo": "zhouba@example.com",
+      "commissionType": "头像",
+      "description": "赛博朋克风格头像，霓虹灯光效",
+      "budget": 350,
       "status": "rejected",
-      "id": 6
+      "createdAt": "2026-06-01T16:45:00.000Z"
     }
   ],
   "gallery": [

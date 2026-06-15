@@ -5,7 +5,7 @@ export function getOrders(artistId) {
 }
 
 export function updateOrder(id, data) {
-  return apiClient.put(`/orders/${id}`, data)
+  return apiClient.patch(`/orders/${id}`, data)
 }
 
 export function createOrder(data) {
