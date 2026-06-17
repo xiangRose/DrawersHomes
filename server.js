@@ -1,8 +1,37 @@
 import jsonServer from 'json-server'
-import { watch, readFileSync } from 'fs'
+import { watch, readFileSync, existsSync, mkdirSync } from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import multer from 'multer'
+import express from 'express'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const AI_MODEL = process.env.AI_MODEL || 'qwen2.5:7b'
 const AI_BASE_URL = process.env.AI_BASE_URL || 'http://127.0.0.1:11434/v1/chat/completions'
+
+// ─── 文件上传配置 ───
+const uploadsDir = path.join(__dirname, 'uploads')
+if (!existsSync(uploadsDir)) mkdirSync(uploadsDir, { recursive: true })
+const storage = multer.diskStorage({
+  destination: uploadsDir,
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase()
+    cb(null, `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`)
+  }
+})
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+    if (allowed.includes(path.extname(file.originalname).toLowerCase())) {
+      cb(null, true)
+    } else {
+      cb(new Error('仅支持 jpg/png/gif/webp 格式'))
+    }
+  }
+})
 
 const server = jsonServer.create()
 const router = jsonServer.router('db.json')
@@ -11,9 +40,26 @@ const middlewares = jsonServer.defaults()
 server.use(middlewares)
 server.use(jsonServer.bodyParser)
 
+// 提供上传文件的静态访问
+server.use('/uploads', express.static(uploadsDir))
+
+// 文件上传端点
+server.post('/upload', (req, res, next) => {
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      if (err instanceof multer.MulterError) {
+        return res.status(400).json({ error: '文件过大，最大 10MB' })
+      }
+      return res.status(400).json({ error: err.message })
+    }
+    if (!req.file) return res.status(400).json({ error: '请选择图片' })
+    res.json({ url: `/uploads/${req.file.filename}` })
+  })
+})
+
 async function callOllama(prompt) {
   const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), 30000)
+  const timeout = setTimeout(() => controller.abort(), 120000)
 
   try {
     const response = await fetch(AI_BASE_URL, {

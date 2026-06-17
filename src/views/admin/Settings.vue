@@ -104,8 +104,26 @@
         <!-- Gallery Dialog -->
         <el-dialog v-model="showGalleryDialog" title="新增作品" width="450px">
           <el-form :model="galleryForm" label-position="top">
+            <el-form-item label="上传图片">
+              <div class="flex items-center gap-3 w-full">
+                <input
+                  ref="fileInputRef"
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  class="hidden"
+                  @change="handleFileSelect"
+                />
+                <el-button type="default" @click="fileInputRef?.click()" :disabled="uploading">
+                  {{ uploading ? '上传中...' : '选择图片' }}
+                </el-button>
+                <span class="text-xs text-gray-400">或输入链接</span>
+              </div>
+              <div v-if="galleryForm.imageUrl" class="mt-2">
+                <img :src="galleryForm.imageUrl" class="w-32 h-32 object-cover rounded-lg border" />
+              </div>
+            </el-form-item>
             <el-form-item label="图片链接">
-              <el-input v-model="galleryForm.imageUrl" placeholder="请输入作品图片URL" />
+              <el-input v-model="galleryForm.imageUrl" placeholder="选择图片后自动填入，也可手动输入URL" />
             </el-form-item>
             <el-form-item label="作品名称">
               <el-input v-model="galleryForm.title" placeholder="如：夏日少女" />
@@ -131,6 +149,7 @@
 import { ref, watch, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useArtistStore } from '@/stores/artist'
+import apiClient from '@/api/index'
 
 const artistStore = useArtistStore()
 const activeTab = ref('profile')
@@ -160,12 +179,34 @@ const deletePricingTargetId = ref(null)
 // Gallery dialog
 const showGalleryDialog = ref(false)
 const savingGallery = ref(false)
+const uploading = ref(false)
+const fileInputRef = ref(null)
 const galleryForm = reactive({
   imageUrl: '',
   title: '',
   category: '',
   description: ''
 })
+
+async function handleFileSelect(e) {
+  const file = e.target.files?.[0]
+  if (!file) return
+  uploading.value = true
+  try {
+    const form = new FormData()
+    form.append('image', file)
+    const { url } = await apiClient.post('/upload', form, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    galleryForm.imageUrl = url
+    ElMessage.success('图片上传成功')
+  } catch (err) {
+    ElMessage.error(err.response?.data?.error || err.message || '上传失败')
+  } finally {
+    uploading.value = false
+    if (fileInputRef.value) fileInputRef.value.value = ''
+  }
+}
 
 // Fetch data on mount
 artistStore.fetchAll(1)
