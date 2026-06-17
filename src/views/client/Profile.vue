@@ -29,7 +29,7 @@
         </a>
       </div>
 
-      <!-- 统计数据：作品书/约稿类型数/接单状态 -->
+      <!-- 统计数据：作品书/约稿类型数/接单状态` -->
       <div class="grid grid-cols-3 gap-3">
         <div class="bg-white rounded-xl p-4 text-center shadow-sm">
           <div class="text-2xl font-bold text-indigo-600">{{ artistStore.gallery.length }}</div>
